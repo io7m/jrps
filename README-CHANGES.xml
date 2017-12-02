@@ -1,0 +1,9 @@
+<c:changelog xmlns:c="urn:com.io7m.changelog:4.0" project="jrps">
+   <c:releases>
+   </c:releases>
+   <c:ticket-systems>
+      <c:ticket-system id="com.github.io7m.jrps"
+                       url="https://github.com/io7m/jrps/issues/"
+                       default="true"/>
+   </c:ticket-systems>
+</c:changelog>

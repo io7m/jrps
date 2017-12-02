@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema
+  targetNamespace="urn:com.io7m.jrps:1.0"
+  xmlns:r="urn:com.io7m.jrps:1.0"
+  xmlns="http://www.w3.org/2001/XMLSchema">
+
+  <simpleType name="resourceIDType">
+    <restriction base="string">
+      <pattern value="[a-zA-Z0-9_]+(.[a-zA-Z0-9_]+)*"/>
+      <minLength value="1"/>
+    </restriction>
+  </simpleType>
+
+  <simpleType name="resourceTypeType">
+    <restriction base="string">
+      <pattern value="[a-zA-Z0-9_]+(.[a-zA-Z0-9_]+)*"/>
+      <minLength value="1"/>
+    </restriction>
+  </simpleType>
+
+  <complexType name="resourceType">
+    <attribute name="id" type="r:resourceIDType" use="required"/>
+    <attribute name="type" type="r:resourceTypeType" use="required"/>
+    <attribute name="path" type="anyURI" use="required"/>
+  </complexType>
+
+  <element name="resource" type="r:resourceType"/>
+
+  <element name="resources">
+    <complexType>
+      <sequence minOccurs="0" maxOccurs="unbounded">
+        <element ref="r:resource"/>
+      </sequence>
+    </complexType>
+    <unique name="resourceIDsMustBeUnique">
+      <selector xpath="r:resource"/>
+      <field xpath="@id"/>
+    </unique>
+  </element>
+
+</schema>

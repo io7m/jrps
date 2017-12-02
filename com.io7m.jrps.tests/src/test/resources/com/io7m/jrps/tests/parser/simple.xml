@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<r:resources xmlns:r="urn:com.io7m.jrps:1.0">
+  <r:resource id="com.io7m.x" type="text" path="/x/y/z/x.txt"/>
+  <r:resource id="com.io7m.y" type="image" path="/x/y/z/y.txt"/>
+</r:resources>
