@@ -14,20 +14,43 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jrps.parser.api;
+package com.io7m.jrps.controller.api;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * A resource receiver.
+ * A reference to a resource.
  */
 
-public interface JRPSResourceErrorReceiverType
+public interface JRPSResourceType
 {
   /**
-   * Receive parse error.
+   * Open the resource.
    *
-   * @param error The parse error
+   * @return A stream of bytes
+   *
+   * @throws IOException On I/O errors
    */
 
-  void receive(
-    JRPSParseError error);
+  InputStream openStream()
+    throws IOException;
+
+  /**
+   * @return The module containing the resource
+   */
+
+  Module module();
+
+  /**
+   * @return The resource ID
+   */
+
+  String id();
+
+  /**
+   * @return The resource type
+   */
+
+  String type();
 }

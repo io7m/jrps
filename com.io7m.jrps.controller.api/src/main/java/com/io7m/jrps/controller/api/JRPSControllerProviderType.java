@@ -14,42 +14,22 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jrps.parser.api;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Set;
+package com.io7m.jrps.controller.api;
 
 /**
- * The type of parser providers.
+ * The type of resource controller providers.
  */
 
-public interface JRPSParserProviderType
+public interface JRPSControllerProviderType
 {
   /**
-   * @return The range of versions supported by this provider
+   * Create a resource controller for the given module layer.
+   *
+   * @param config The controller configuration
+   *
+   * @return A resource controller
    */
 
-  Set<JRPSFormatVersionRange> supported();
-
-  /**
-   * Create a new parser.
-   *
-   * @param uri       The URI for diagnostics purposes
-   * @param stream    The input stream
-   * @param resources The resource receiver
-   * @param errors    A parse error receiver
-   *
-   * @return A new parser
-   *
-   * @throws IOException On I/O errors
-   */
-
-  JRPSParserType create(
-    URI uri,
-    InputStream stream,
-    JRPSResourceReceiverType resources,
-    JRPSParserErrorReceiverType errors)
-    throws IOException;
+  JRPSControllerType createController(
+    JRPSControllerConfiguration config);
 }

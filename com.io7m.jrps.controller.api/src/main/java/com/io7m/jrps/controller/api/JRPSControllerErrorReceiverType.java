@@ -14,42 +14,33 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jrps.parser.api;
+package com.io7m.jrps.controller.api;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Set;
+import com.io7m.jrps.parser.api.JRPSParserErrorReceiverType;
+
+import java.util.Optional;
 
 /**
- * The type of parser providers.
+ * The type of error receivers.
  */
 
-public interface JRPSParserProviderType
+public interface JRPSControllerErrorReceiverType
+  extends JRPSParserErrorReceiverType
 {
   /**
-   * @return The range of versions supported by this provider
+   * An error occurred whilst constructing a controller.
+   *
+   * @param module    The module that caused the error
+   * @param file      The file in question, if any
+   * @param resource  The resource in question, if any
+   * @param message   The error message
+   * @param exception The exception raised, if any
    */
 
-  Set<JRPSFormatVersionRange> supported();
-
-  /**
-   * Create a new parser.
-   *
-   * @param uri       The URI for diagnostics purposes
-   * @param stream    The input stream
-   * @param resources The resource receiver
-   * @param errors    A parse error receiver
-   *
-   * @return A new parser
-   *
-   * @throws IOException On I/O errors
-   */
-
-  JRPSParserType create(
-    URI uri,
-    InputStream stream,
-    JRPSResourceReceiverType resources,
-    JRPSParserErrorReceiverType errors)
-    throws IOException;
+  void onConfigurationError(
+    Module module,
+    Optional<String> file,
+    Optional<String> resource,
+    String message,
+    Optional<Exception> exception);
 }

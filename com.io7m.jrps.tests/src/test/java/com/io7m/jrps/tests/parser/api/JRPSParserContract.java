@@ -17,8 +17,8 @@
 package com.io7m.jrps.tests.parser.api;
 
 import com.io7m.jrps.parser.api.JRPSParseError;
+import com.io7m.jrps.parser.api.JRPSParserErrorReceiverType;
 import com.io7m.jrps.parser.api.JRPSParserType;
-import com.io7m.jrps.parser.api.JRPSResourceErrorReceiverType;
 import com.io7m.jrps.parser.api.JRPSResourceReceiverType;
 import mockit.FullVerifications;
 import mockit.Mocked;
@@ -35,7 +35,7 @@ public abstract class JRPSParserContract
     URI uri,
     InputStream stream,
     JRPSResourceReceiverType res,
-    JRPSResourceErrorReceiverType error)
+    JRPSParserErrorReceiverType error)
     throws Exception;
 
   protected abstract Logger log();
@@ -47,7 +47,7 @@ public abstract class JRPSParserContract
   @Test
   public void testEmpty(
     final @Mocked JRPSResourceReceiverType resources,
-    final @Mocked JRPSResourceErrorReceiverType errors)
+    final @Mocked JRPSParserErrorReceiverType errors)
     throws Exception
   {
     try (JRPSParserType parser =
@@ -60,7 +60,7 @@ public abstract class JRPSParserContract
     {{
       resources.receive(this.anyString, this.anyString, this.anyString);
       this.times = 0;
-      errors.receive((JRPSParseError) this.any);
+      errors.onParseError((JRPSParseError) this.any);
       this.times = 0;
     }};
   }
@@ -68,7 +68,7 @@ public abstract class JRPSParserContract
   @Test
   public void testSimple(
     final @Mocked JRPSResourceReceiverType resources,
-    final @Mocked JRPSResourceErrorReceiverType errors)
+    final @Mocked JRPSParserErrorReceiverType errors)
     throws Exception
   {
     try (JRPSParserType parser =
@@ -81,8 +81,29 @@ public abstract class JRPSParserContract
     {{
       resources.receive("com.io7m.x", "text", "/x/y/z/x.txt");
       resources.receive("com.io7m.y", "image", "/x/y/z/y.txt");
-      errors.receive((JRPSParseError) this.any);
+      errors.onParseError((JRPSParseError) this.any);
       this.times = 0;
+    }};
+  }
+
+  @Test
+  public void testInvalid(
+    final @Mocked JRPSResourceReceiverType resources,
+    final @Mocked JRPSParserErrorReceiverType errors)
+    throws Exception
+  {
+    try (JRPSParserType parser =
+           this.createParser(URI.create("invalid"),
+                             this.resource("invalid.xml"),
+                             resources,
+                             errors)) {
+      Assertions.assertFalse(parser.parse());
+    }
+
+    new FullVerifications()
+    {{
+      errors.onParseError((JRPSParseError) this.any);
+      this.times = 3;
     }};
   }
 }

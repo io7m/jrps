@@ -12,17 +12,28 @@
     <version>0.0.1</version>
   </parent>
 
-  <artifactId>com.io7m.jrps.core</artifactId>
-  <packaging>bundle</packaging>
+  <artifactId>com.io7m.jrps.controller</artifactId>
+  <packaging>jar</packaging>
 
-  <name>com.io7m.jrps.core</name>
-  <description>Resource package system (Core)</description>
+  <name>com.io7m.jrps.controller</name>
+  <description>Resource package system (Controller implementation)</description>
   <url>http://io7m.github.io/jrps/</url>
 
   <dependencies>
     <dependency>
-      <groupId>org.immutables</groupId>
-      <artifactId>value</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.jrps.controller.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.jrps.parser.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
   </dependencies>
 

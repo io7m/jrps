@@ -34,8 +34,8 @@
       <property name="checkFormat" value=".*"/>
     </module>
 
-    <module name="AbstractClassName"/>
     <!--
+    <module name="AbstractClassName"/>
     <module name="AnnotationUseStyle"/>
     -->
 

@@ -16,40 +16,18 @@
 
 package com.io7m.jrps.parser.api;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Set;
-
 /**
- * The type of parser providers.
+ * A resource receiver.
  */
 
-public interface JRPSParserProviderType
+public interface JRPSParserErrorReceiverType
 {
   /**
-   * @return The range of versions supported by this provider
+   * Receive parse error.
+   *
+   * @param error The parse error
    */
 
-  Set<JRPSFormatVersionRange> supported();
-
-  /**
-   * Create a new parser.
-   *
-   * @param uri       The URI for diagnostics purposes
-   * @param stream    The input stream
-   * @param resources The resource receiver
-   * @param errors    A parse error receiver
-   *
-   * @return A new parser
-   *
-   * @throws IOException On I/O errors
-   */
-
-  JRPSParserType create(
-    URI uri,
-    InputStream stream,
-    JRPSResourceReceiverType resources,
-    JRPSParserErrorReceiverType errors)
-    throws IOException;
+  void onParseError(
+    JRPSParseError error);
 }

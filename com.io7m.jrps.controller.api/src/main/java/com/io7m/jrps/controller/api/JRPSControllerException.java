@@ -1,0 +1,68 @@
+/*
+ * Copyright © 2017 <code@io7m.com> http://io7m.com
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+package com.io7m.jrps.controller.api;
+
+import com.io7m.jrps.core.JRPSException;
+
+import java.util.Objects;
+
+/**
+ * A controller exception.
+ */
+
+public final class JRPSControllerException extends JRPSException
+{
+  /**
+   * Construct an exception.
+   *
+   * @param in_message The message
+   */
+
+  public JRPSControllerException(
+    final String in_message)
+  {
+    super(Objects.requireNonNull(in_message, "Message"));
+  }
+
+  /**
+   * Construct an exception.
+   *
+   * @param in_message The message
+   * @param in_cause   The cause
+   */
+
+  public JRPSControllerException(
+    final String in_message,
+    final Throwable in_cause)
+  {
+    super(
+      Objects.requireNonNull(in_message, "Message"),
+      Objects.requireNonNull(in_cause, "Cause"));
+  }
+
+  /**
+   * Construct an exception.
+   *
+   * @param in_cause   The cause
+   */
+
+  public JRPSControllerException(
+    final Throwable in_cause)
+  {
+    super(Objects.requireNonNull(in_cause, "Cause"));
+  }
+}

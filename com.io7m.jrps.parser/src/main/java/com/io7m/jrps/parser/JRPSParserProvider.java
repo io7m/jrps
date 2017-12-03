@@ -20,9 +20,9 @@ import com.io7m.jlexing.core.LexicalPosition;
 import com.io7m.jrps.parser.api.JRPSFormatVersion;
 import com.io7m.jrps.parser.api.JRPSFormatVersionRange;
 import com.io7m.jrps.parser.api.JRPSParseError;
+import com.io7m.jrps.parser.api.JRPSParserErrorReceiverType;
 import com.io7m.jrps.parser.api.JRPSParserProviderType;
 import com.io7m.jrps.parser.api.JRPSParserType;
-import com.io7m.jrps.parser.api.JRPSResourceErrorReceiverType;
 import com.io7m.jrps.parser.api.JRPSResourceReceiverType;
 import com.io7m.jrps.schema.JRPSSchema;
 import org.slf4j.Logger;
@@ -67,6 +67,7 @@ public final class JRPSParserProvider implements JRPSParserProviderType
       SAXParserFactory.newInstance();
     this.schema_factory =
       SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
     this.supported = Set.of(
       JRPSFormatVersionRange.of(
         JRPSFormatVersion.of(1, 0),
@@ -93,7 +94,7 @@ public final class JRPSParserProvider implements JRPSParserProviderType
     final URI uri,
     final InputStream stream,
     final JRPSResourceReceiverType resources,
-    final JRPSResourceErrorReceiverType errors)
+    final JRPSParserErrorReceiverType errors)
     throws IOException
   {
     Objects.requireNonNull(uri, "URI");
@@ -104,9 +105,6 @@ public final class JRPSParserProvider implements JRPSParserProviderType
     try {
       final Schema schema =
         this.schema_factory.newSchema(JRPSSchema.schemaURL());
-
-      this.parsers.setNamespaceAware(true);
-      this.parsers.setSchema(schema);
 
       this.parsers.setFeature(
         XMLConstants.FEATURE_SECURE_PROCESSING,
@@ -133,6 +131,9 @@ public final class JRPSParserProvider implements JRPSParserProviderType
         "http://apache.org/xml/features/xinclude",
         false);
 
+      this.parsers.setNamespaceAware(true);
+      this.parsers.setSchema(schema);
+
       final SAXParser sax_parser = this.parsers.newSAXParser();
       return new Parser(uri, stream, sax_parser, resources, errors);
     } catch (final ParserConfigurationException | SAXException e) {
@@ -144,7 +145,7 @@ public final class JRPSParserProvider implements JRPSParserProviderType
     extends DefaultHandler implements JRPSParserType
   {
     private final JRPSResourceReceiverType receiver_res;
-    private final JRPSResourceErrorReceiverType receiver_errors;
+    private final JRPSParserErrorReceiverType receiver_errors;
     private final URI uri;
     private final SAXParser parser;
     private final InputStream stream;
@@ -158,7 +159,7 @@ public final class JRPSParserProvider implements JRPSParserProviderType
       final InputStream in_stream,
       final SAXParser sax_parser,
       final JRPSResourceReceiverType resources,
-      final JRPSResourceErrorReceiverType errors)
+      final JRPSParserErrorReceiverType errors)
     {
       this.uri = in_uri;
       this.parser = sax_parser;
@@ -269,6 +270,10 @@ public final class JRPSParserProvider implements JRPSParserProviderType
       LOG.trace("startElement: {} {} {} {}",
                 in_uri, in_local_name, in_q_name, attributes);
 
+      if (this.failed) {
+        return;
+      }
+
       if (!Objects.equals(in_uri, this.uri_expected)) {
         return;
       }
@@ -316,10 +321,26 @@ public final class JRPSParserProvider implements JRPSParserProviderType
         }
       }
 
-      Objects.requireNonNull(id, "ID");
+      Objects.requireNonNull(id, "Id");
       Objects.requireNonNull(type, "Type");
       Objects.requireNonNull(path, "Path");
-      this.receiver_res.receive(id, type, path);
+
+      try {
+        this.receiver_res.receive(id, type, path);
+      } catch (final Exception e) {
+        this.receiver_errors.onParseError(
+          JRPSParseError.builder()
+            .setLexical(LexicalPosition.<URI>builder()
+                          .setLine(this.locator.getLineNumber())
+                          .setColumn(this.locator.getColumnNumber())
+                          .setFile(this.uri)
+                          .build())
+            .setSeverity(JRPSParseError.Severity.ERROR)
+            .setMessage(e.getMessage())
+            .setException(e)
+            .build());
+        this.failed = true;
+      }
     }
 
     @Override
@@ -330,6 +351,10 @@ public final class JRPSParserProvider implements JRPSParserProviderType
       throws SAXException
     {
       LOG.trace("endElement: {} {} {}", in_uri, in_local_name, in_qname);
+
+      if (this.failed) {
+        return;
+      }
 
       if (!Objects.equals(in_uri, this.uri_expected)) {
         return;
@@ -398,7 +423,7 @@ public final class JRPSParserProvider implements JRPSParserProviderType
       final SAXParseException e)
       throws SAXException
     {
-      this.receiver_errors.receive(
+      this.receiver_errors.onParseError(
         JRPSParseError.builder()
           .setLexical(LexicalPosition.<URI>builder()
                         .setLine(e.getLineNumber())
@@ -416,7 +441,7 @@ public final class JRPSParserProvider implements JRPSParserProviderType
       final SAXParseException e)
       throws SAXException
     {
-      this.receiver_errors.receive(
+      this.receiver_errors.onParseError(
         JRPSParseError.builder()
           .setLexical(LexicalPosition.<URI>builder()
                         .setLine(e.getLineNumber())
@@ -436,7 +461,7 @@ public final class JRPSParserProvider implements JRPSParserProviderType
       final SAXParseException e)
       throws SAXException
     {
-      this.receiver_errors.receive(
+      this.receiver_errors.onParseError(
         JRPSParseError.builder()
           .setLexical(LexicalPosition.<URI>builder()
                         .setLine(e.getLineNumber())

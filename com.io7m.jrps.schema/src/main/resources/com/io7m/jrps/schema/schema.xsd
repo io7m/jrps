@@ -2,6 +2,7 @@
 <schema
   targetNamespace="urn:com.io7m.jrps:1.0"
   xmlns:r="urn:com.io7m.jrps:1.0"
+  elementFormDefault="qualified"
   xmlns="http://www.w3.org/2001/XMLSchema">
 
   <simpleType name="resourceIDType">

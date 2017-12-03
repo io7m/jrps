@@ -14,42 +14,38 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.jrps.parser.api;
+package com.io7m.jrps.controller.api;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Set;
+import com.io7m.jrps.core.JRPSImmutableStyleType;
+import com.io7m.jrps.parser.api.JRPSParserProviderType;
+import org.immutables.value.Value;
 
 /**
- * The type of parser providers.
+ * The type of controller configurations.
  */
 
-public interface JRPSParserProviderType
+@JRPSImmutableStyleType
+@Value.Immutable
+public interface JRPSControllerConfigurationType
 {
   /**
-   * @return The range of versions supported by this provider
+   * @return The module layer
    */
 
-  Set<JRPSFormatVersionRange> supported();
+  @Value.Parameter
+  ModuleLayer moduleLayer();
 
   /**
-   * Create a new parser.
-   *
-   * @param uri       The URI for diagnostics purposes
-   * @param stream    The input stream
-   * @param resources The resource receiver
-   * @param errors    A parse error receiver
-   *
-   * @return A new parser
-   *
-   * @throws IOException On I/O errors
+   * @return A parser provider
    */
 
-  JRPSParserType create(
-    URI uri,
-    InputStream stream,
-    JRPSResourceReceiverType resources,
-    JRPSParserErrorReceiverType errors)
-    throws IOException;
+  @Value.Parameter
+  JRPSParserProviderType parsers();
+
+  /**
+   * @return An error receiver
+   */
+
+  @Value.Parameter
+  JRPSControllerErrorReceiverType errors();
 }

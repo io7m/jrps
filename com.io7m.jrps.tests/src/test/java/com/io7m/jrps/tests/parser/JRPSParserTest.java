@@ -18,7 +18,7 @@ package com.io7m.jrps.tests.parser;
 
 import com.io7m.jrps.parser.JRPSParserProvider;
 import com.io7m.jrps.parser.api.JRPSParserType;
-import com.io7m.jrps.parser.api.JRPSResourceErrorReceiverType;
+import com.io7m.jrps.parser.api.JRPSParserErrorReceiverType;
 import com.io7m.jrps.parser.api.JRPSResourceReceiverType;
 import com.io7m.jrps.tests.parser.api.JRPSParserContract;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public final class JRPSParserTest extends JRPSParserContract
     final URI uri,
     final InputStream stream,
     final JRPSResourceReceiverType res,
-    final JRPSResourceErrorReceiverType error)
+    final JRPSParserErrorReceiverType error)
     throws Exception
   {
     return JRPSParserProvider.provider().create(uri, stream, res, error);

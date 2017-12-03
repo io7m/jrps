@@ -28,10 +28,13 @@ public interface JRPSResourceReceiverType
    * @param id   The resource ID
    * @param type The resource type
    * @param path The resource path
+   *
+   * @throws Exception On errors
    */
 
   void receive(
     String id,
     String type,
-    String path);
+    String path)
+    throws Exception;
 }
